@@ -39,6 +39,20 @@ async function run() {
             res.send(result)
             console.log(id);
         })
+
+        //update single data quantity
+        app.put('/bike/:id', async (req, res) => {
+            const id = req.params.id
+            const filter = { _id: ObjectId(id) }
+            const options = { upsert: true };
+            const updateDoc = {
+                $set: {
+                    quantity : req.body.newQuantity
+                },
+              };
+            const result = await bikesCollection.updateOne(filter, updateDoc, options) 
+            res.send(result)
+        })
     }
     finally {
         
