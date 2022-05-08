@@ -30,7 +30,7 @@ async function run() {
             res.send(result)
         })
         //rmv----------------
-        app.post('/bike', async (req, res) => {
+        app.get('/bike', async (req, res) => {
             res.send(' one hero')
         })
 
