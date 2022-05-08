@@ -29,6 +29,10 @@ async function run() {
             const result = await bikesCollection.insertOne(data)
             res.send(result)
         })
+        //rmv----------------
+        app.post('/bikes', async (req, res) => {
+            res.send(' one hero')
+        })
 
         // load all data
         app.get('/bikes', async(req, res)=>{
