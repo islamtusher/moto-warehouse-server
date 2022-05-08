@@ -28,6 +28,7 @@ async function run() {
             const data = req.body
             const result = await bikesCollection.insertOne(data)
             res.send(result)
+            console.log(req.body);
         })
 
         // load all data
@@ -44,10 +45,19 @@ async function run() {
             const query = { _id: ObjectId(id) }
             const result = await bikesCollection.findOne(query)
             res.send(result)
-            console.log(id);
+            // console.log(id);
         })
 
-        //update single data quantity
+        // load data specific using email
+        app.get('/myitems', async (req, res) => {
+            const email = req.query.email
+            const query = { email: email }
+            const cursor = bikesCollection.find(query)
+            const orders = await cursor.toArray()
+            res.send(orders)
+        })
+
+        //update single data quantity and sold
         app.put('/bike/:id', async (req, res) => {
             const id = req.params.id
             const filter = { _id: ObjectId(id) }
@@ -55,6 +65,7 @@ async function run() {
             const updateDoc = {
                 $set: {
                     quantity : req.body.newQuantity
+                    // sold : req.body.newSold
                 },
               };
             const result = await bikesCollection.updateOne(filter, updateDoc, options) 
