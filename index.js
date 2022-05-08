@@ -53,6 +53,14 @@ async function run() {
             const result = await bikesCollection.updateOne(filter, updateDoc, options) 
             res.send(result)
         })
+
+        // Delete single data
+        app.delete('/bike/:id', async (req, res) => {
+            const id = req.params.id
+            const query = { _id: ObjectId(id) }
+            const result = await bikesCollection.deleteOne(query)
+            res.send(result)
+        })
     }
     finally {
         
