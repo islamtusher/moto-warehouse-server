@@ -28,7 +28,6 @@ async function run() {
             const data = req.body
             const result = await bikesCollection.insertOne(data)
             res.send(result)
-            console.log(req.body);
         })
 
         // load all data
