@@ -23,6 +23,13 @@ async function run() {
             res.send('Moto WareHouse server running')
         })
 
+        // post single data
+        app.post('/bikes', async (req, res) => {
+            const data = req.body
+            const result = await bikesCollection.insertOne(data)
+            res.send(result)
+        })
+
         // load all data
         app.get('/bikes', async(req, res)=>{
             const query ={}
