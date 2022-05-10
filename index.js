@@ -37,12 +37,13 @@ async function run() {
         console.log('conncet to db');
 
         // jwt Auth
-        app.post('/login', async (req, res) => {
+        app.post('/token', async (req, res) => {
             const user = req.body
             const accessToken = jwt.sign(user, process.env.SECRET_TOKEN, {
                 expiresIn: '10d'
             })
-            res.send({accessToken})
+            res.send({ accessToken })
+            console.log(accessToken);
         })
 
         // server home 
@@ -74,10 +75,14 @@ async function run() {
         })
 
         // load data specific using email
-        app.get('/myitems', verifyJwt, async (req, res) => {
-            const decoded = req.decoded.email
-            const token = req.headers.authorization
-            const email = req.query.email
+        app.get('/myitems',verifyJwt, async (req, res) => {
+            // const decoded = req.decoded.email
+            // const token = req.headers.authorization
+            // const email = req.query.email
+            // const query = { email: email }
+            // const cursor = bikesCollection.find(query)
+            // const orders = await cursor.toArray()
+            // res.send(orders)
             if (email === decoded) {
                 const query = { email: email }
                 const cursor = bikesCollection.find(query)
