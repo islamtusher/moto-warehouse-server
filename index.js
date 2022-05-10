@@ -13,22 +13,22 @@ const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
 // jwt verufy
-// function verifyJwt(req, res, next){
-//     const authHeader = req.headers.authorization
-//     if (!authHeader) {
-//         return res.status(401).send({message:'Unauthorize Access'})
-//     }
-//     const token = authHeader.split(' ')[1]
-//     jwt.verify(token, process.env.SECRET_TOKEN, (err, decoded) => {
-//         if (err){
-//             return res.status(403).send({message: 'Frbidden Access'})
-//         }
-//         console.log('decoded', decoded);
-//         req.decoded = decoded
-//         next()
+function verifyJwt(req, res, next){
+    const authHeader = req.headers.authorization
+    if (!authHeader) {
+        return res.status(401).send({message:'Unauthorize Access'})
+    }
+    const token = authHeader.split(' ')[1]
+    jwt.verify(token, process.env.SECRET_TOKEN, (err, decoded) => {
+        if (err){
+            return res.status(403).send({message: 'Frbidden Access'})
+        }
+        console.log('decoded', decoded);
+        req.decoded = decoded
+        next()
 
-//     })
-// }
+    })
+}
 
 async function run() {
     try {
@@ -37,14 +37,14 @@ async function run() {
         console.log('conncet to db');
 
         // jwt Auth
-        // app.post('/login', async (req, res) => {
-        //     const user = req.body
-        //     const accessToken = jwt.sign(user, process.env.SECRET_TOKEN, {
-        //         expiresIn: '10d'
-        //     })
-        //     res.send({ accessToken })
-        //     console.log(accessToken);
-        // })
+        app.post('/token', async (req, res) => {
+            const user = req.body
+            const accessToken = jwt.sign(user, process.env.SECRET_TOKEN, {
+                expiresIn: '10d'
+            })
+            res.send({ accessToken })
+            console.log(accessToken);
+        })
 
         // server home 
         app.get('/', async (req, res) => {
@@ -75,23 +75,23 @@ async function run() {
         })
 
         // load data specific using email
-        app.get('/myitems', async (req, res) => {
-            // const decoded = req.decoded.email
-            // const token = req.headers.authorization
-            const email = req.query.email
-            const query = { email: email }
-            const cursor = bikesCollection.find(query)
-            const orders = await cursor.toArray()
-            res.send(orders)
-            // if (email === decoded) {
-            //     const query = { email: email }
-            //     const cursor = bikesCollection.find(query)
-            //     const orders = await cursor.toArray()
-            //     res.send(orders)
-            // }
-            // else {
-            //     res.status(403).send({message: 'forbeden access'})
-            // }
+        app.get('/myitems',verifyJwt, async (req, res) => {
+            const decoded = req.decoded.email
+            const token = req.headers.authorization
+            // const email = req.query.email
+            // const query = { email: email }
+            // const cursor = bikesCollection.find(query)
+            // const orders = await cursor.toArray()
+            // res.send(orders)
+            if (email === decoded) {
+                const query = { email: email }
+                const cursor = bikesCollection.find(query)
+                const orders = await cursor.toArray()
+                res.send(orders)
+            }
+            else {
+                res.status(403).send({message: 'forbeden access'})
+            }
         })
 
         //update single data quantity and sold
