@@ -37,7 +37,7 @@ async function run() {
         console.log('conncet to db');
 
         // jwt Auth
-        app.post('/token', async (req, res) => {
+        app.post('/login', async (req, res) => {
             const user = req.body
             const accessToken = jwt.sign(user, process.env.SECRET_TOKEN, {
                 expiresIn: '10d'
