@@ -102,7 +102,7 @@ async function run() {
         app.get('/myitems',verifyJwt, async (req, res) => {
             const decoded = req.decoded.email
             const token = req.headers.authorization
-            // const email = req.query.email
+            const email = req.query.email
             // const query = { email: email }
             // const cursor = bikesCollection.find(query)
             // const orders = await cursor.toArray()
