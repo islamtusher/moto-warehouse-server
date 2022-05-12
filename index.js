@@ -6,6 +6,7 @@ const port = process.env.PORT || 5000
 const app = express();
 require('dotenv').config();
 
+// cors error handle
 app.use(function(req, res, next) {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
@@ -47,7 +48,7 @@ function verifyJwt(req, res, next){
         if (err){
             return res.status(403).send({message: 'Frbidden Access'})
         }
-        console.log('decoded', decoded);
+        console.log('jWT decoded', decoded);
         req.decoded = decoded
         next()
 
@@ -58,7 +59,7 @@ async function run() {
     try {
         await client.connect()
         const bikesCollection = client.db('warehouse-stocks').collection('moto-collection')
-        console.log('conncet to db');
+        console.log('Conncet to DB');
 
         // jwt Auth
         app.post('/token', async (req, res) => {
@@ -67,7 +68,6 @@ async function run() {
                 expiresIn: '10d'
             })
             res.send({ accessToken })
-            console.log(accessToken);
         })
 
         // server home 
@@ -98,15 +98,11 @@ async function run() {
             res.send(result)
         })
 
-        // load data specific using email
+        // load specific data  using email
         app.get('/myitems',verifyJwt, async (req, res) => {
             const decoded = req.decoded.email
             const token = req.headers.authorization
             const email = req.query.email
-            // const query = { email: email }
-            // const cursor = bikesCollection.find(query)
-            // const orders = await cursor.toArray()
-            // res.send(orders)
             if (email === decoded) {
                 const query = { email: email }
                 const cursor = bikesCollection.find(query)
@@ -118,7 +114,7 @@ async function run() {
             }
         })
 
-        //update single data quantity and sold
+        //update single data quantity
         app.put('/bike/:id', async (req, res) => {
             const id = req.params.id
             const filter = { _id: ObjectId(id) }
@@ -126,7 +122,6 @@ async function run() {
             const updateDoc = {
                 $set: {
                     quantity : req.body.newQuantity
-                    // sold : req.body.newSold
                 },
               };
             const result = await bikesCollection.updateOne(filter, updateDoc, options) 
